@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engagement Blueprint — Stadium</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#1E1235;--surface:#2A1A4A;--surface2:#341F58;--surface3:#3D2466;
+  --border:rgba(255,255,255,0.11);--border-hi:rgba(255,255,255,0.26);
+  --text:rgba(255,255,255,0.97);--mid:rgba(255,255,255,0.84);--muted:rgba(255,255,255,0.62);
+  --red:#FF4D6A;--orange:#FF7A35;--yellow:#FFD600;--green:#2ECC71;--blue:#4D9FFF;--purple:#A855F7;
+  --swag:#FF7A35;--rec:#2ECC71;--evt:#4D9FFF;
+  --swag-d:rgba(255,122,53,0.13);--rec-d:rgba(46,204,113,0.13);--evt-d:rgba(77,159,255,0.13);
+  --t0:#2ECC71;--t0-d:rgba(46,204,113,0.12);
+  --t1:#4D9FFF;--t1-d:rgba(77,159,255,0.10);
+  --t2:#8A8A9A;--t2-d:rgba(138,138,154,0.10);
+}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;font-size:16px;line-height:1.55;}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--border);background:rgba(30,18,53,0.96);backdrop-filter:blur(14px);position:sticky;top:0;z-index:200;}
+.logo{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:800;letter-spacing:-.3px;}
+.logo-sub{font-size:12px;font-weight:500;color:var(--muted);border-left:1px solid var(--border);padding-left:10px;margin-left:4px;}
+.prog{display:flex;align-items:center;gap:8px;}
+.prog-pip{width:40px;height:4px;background:var(--border);border-radius:2px;transition:background .4s;}
+.prog-pip.done{background:var(--green);}
+.prog-pip.active{background:var(--orange);}
+.prog-lbl{font-size:12px;color:var(--muted);margin-left:6px;white-space:nowrap;}
+
+/* LAYOUT */
+.main{display:flex;min-height:calc(100vh - 61px);}
+.left{flex:1;padding:40px 36px;overflow-y:auto;max-height:calc(100vh - 61px);}
+.right{width:420px;background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;max-height:calc(100vh - 61px);padding:30px 26px;flex-shrink:0;}
+
+/* TYPE */
+.eyebrow{font-size:11px;font-weight:700;color:var(--orange);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+.stitle{font-size:28px;font-weight:800;letter-spacing:-.7px;line-height:1.2;margin-bottom:8px;}
+.ssub{font-size:15px;color:var(--muted);margin-bottom:32px;max-width:500px;line-height:1.7;}
+
+/* FORM */
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--mid);margin-bottom:7px;}
+.field input,.field select{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:15px;padding:13px 14px;border-radius:9px;outline:none;transition:border-color .2s;appearance:none;}
+.field input::placeholder{color:var(--muted);}
+.field input:focus,.field select:focus{border-color:var(--green);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:13px 22px;border-radius:9px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
+.btn-p{background:var(--green);color:#000;}
+.btn-p:hover{background:#27b562;}
+.btn-p:disabled{opacity:.32;cursor:not-allowed;}
+.btn-g{background:transparent;color:var(--mid);border:1px solid var(--border);}
+.btn-g:hover{border-color:var(--border-hi);color:var(--text);}
+.btn-present{background:#fff;color:#000;width:100%;justify-content:center;font-size:16px;padding:16px;border-radius:10px;margin-top:16px;font-weight:700;}
+.btn-present:hover{background:#ececec;}
+.brow{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap;}
+
+/* AREA TILES */
+.area-tile{border:2px solid var(--border);border-radius:16px;margin-bottom:14px;overflow:hidden;transition:border-color .2s,background .2s,transform .15s;}
+.area-tile:hover{border-color:var(--border-hi);transform:translateY(-1px);}
+.area-tile.open-swag{border-color:var(--swag);background:var(--swag-d);}
+.area-tile.open-rec{border-color:var(--rec);background:var(--rec-d);}
+.area-tile.open-evt{border-color:var(--evt);background:var(--evt-d);}
+.tile-hdr{display:flex;align-items:center;gap:16px;padding:22px 24px;cursor:pointer;user-select:none;}
+.tile-icon{font-size:30px;flex-shrink:0;}
+.tile-meta{flex:1;}
+.tile-name{font-size:17px;font-weight:800;margin-bottom:4px;letter-spacing:-.2px;}
+.tile-quote{font-size:14px;color:var(--muted);line-height:1.5;font-style:italic;}
+.tile-toggle{width:32px;height:32px;border-radius:50%;border:2px solid var(--border-hi);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--muted);flex-shrink:0;transition:all .2s;font-weight:700;}
+.open-swag .tile-toggle{background:var(--swag);border-color:var(--swag);color:#000;}
+.open-rec .tile-toggle{background:var(--rec);border-color:var(--rec);color:#000;}
+.open-evt .tile-toggle{background:var(--evt);border-color:var(--evt);color:#000;}
+.tile-body{display:none;padding:0 24px 24px;border-top:1px solid var(--border);}
+.open-swag .tile-body,.open-rec .tile-body,.open-evt .tile-body{display:block;}
+
+/* CHIPS */
+.chip-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.chip{padding:10px 16px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--mid);font-size:14px;font-family:inherit;cursor:pointer;transition:all .13s;font-weight:500;line-height:1;}
+.chip:hover{border-color:var(--border-hi);color:var(--text);}
+.chip.cs{border-color:var(--swag);color:var(--swag);background:var(--swag-d);}
+.chip.cr{border-color:var(--rec);color:var(--rec);background:var(--rec-d);}
+.chip.ce{border-color:var(--evt);color:var(--evt);background:var(--evt-d);}
+.field-pt{margin-top:20px;}
+.field-pt label{display:block;font-size:13px;font-weight:600;color:var(--mid);margin-bottom:8px;}
+
+/* BLUEPRINT PANEL */
+.bp-lbl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;}
+.prospect-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;gap:14px;}
+.p-logo{width:38px;height:38px;background:linear-gradient(135deg,#FF4D6A,#4D9FFF);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;flex-shrink:0;}
+.p-name{font-size:15px;font-weight:700;}
+.p-meta{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5;}
+.bp-empty{text-align:center;padding:52px 16px;color:var(--muted);}
+.bp-empty-icon{font-size:34px;margin-bottom:14px;opacity:.4;}
+.bp-empty-txt{font-size:14px;line-height:1.8;max-width:260px;margin:0 auto;}
+.bp-sec{margin-bottom:18px;animation:slideUp .28s ease;}
+.bp-sec-lbl{font-size:10px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.pain-row{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.55;margin-bottom:8px;color:var(--mid);}
+.pdot{width:14px;height:14px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.pdot.s{background:var(--swag);}.pdot.r{background:var(--rec);}.pdot.e{background:var(--evt);}
+
+/* TIER GROUPS */
+.tier-group{margin-bottom:14px;}
+.tier-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.tier-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.tier-dot.t0{background:var(--t0);}.tier-dot.t1{background:var(--t1);}.tier-dot.t2{background:var(--t2);}
+.tier-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;}
+.tier-lbl.t0{color:var(--t0);}.tier-lbl.t1{color:var(--t1);}.tier-lbl.t2{color:var(--t2);}
+.tier-body{border-radius:10px;overflow:hidden;border:1px solid var(--border);}
+.tier-body.t0{border-color:rgba(46,204,113,0.30);background:var(--t0-d);}
+.tier-body.t1{border-color:rgba(77,159,255,0.22);background:var(--t1-d);}
+.tier-body.t2{border-color:rgba(138,138,154,0.18);background:var(--t2-d);}
+.sol-item{padding:12px 14px;}
+.sol-item+.sol-item{border-top:1px solid var(--border);}
+.sol-name{font-size:13px;font-weight:700;margin-bottom:3px;line-height:1.3;}
+.sol-why{font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* COMPLEXITY BLOCK */
+.cx2-block{background:var(--surface3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.cx2-headline{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;}
+.cx2-pct{font-size:28px;font-weight:900;letter-spacing:-.8px;color:var(--green);line-height:1;}
+.cx2-lbl{font-size:12px;color:var(--mid);font-weight:600;}
+.cx2-bars{margin-bottom:12px;}
+.cx2-bar-row{display:flex;align-items:center;gap:9px;margin-bottom:6px;}
+.cx2-bar-lbl{font-size:11px;font-weight:700;width:54px;flex-shrink:0;}
+.cx2-bar-lbl.now{color:var(--red);}
+.cx2-bar-lbl.st{color:var(--green);}
+.cx2-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.cx2-bar-fill{height:100%;border-radius:3px;transition:width 1s ease;}
+.cx2-bar-fill.now{background:var(--red);}
+.cx2-bar-fill.st{background:var(--green);}
+.cx2-bar-tag{font-size:10px;font-weight:700;width:46px;flex-shrink:0;}
+.cx2-drivers{border-top:1px solid var(--border);padding-top:10px;}
+.cx2-drivers-lbl{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.cx2-driver{display:flex;align-items:flex-start;gap:7px;font-size:11px;color:var(--muted);margin-bottom:5px;line-height:1.4;}
+.cx2-driver-dot{width:4px;height:4px;border-radius:50%;background:var(--muted);flex-shrink:0;margin-top:5px;}
+
+/* RIGHT PANEL STATS — slightly compact vs present mode */
+.bp-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.bp-stat-cell{background:var(--surface3);border:1px solid var(--border);border-radius:9px;padding:13px 14px;}
+.bp-stat-num{font-size:22px;font-weight:900;letter-spacing:-.5px;line-height:1;}
+.bp-stat-label{font-size:12px;color:var(--mid);margin-top:5px;line-height:1.4;font-weight:500;}
+.bp-stat-source{font-size:9px;color:rgba(255,255,255,0.30);margin-top:3px;}
+
+/* PLATFORM STATS (present mode only) */
+.impact-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.impact-cell{background:var(--surface3);border:1px solid var(--border);border-radius:11px;padding:18px 20px;}
+.impact-num{font-size:32px;font-weight:900;letter-spacing:-.8px;line-height:1;}
+.impact-label{font-size:13px;color:var(--mid);margin-top:6px;line-height:1.4;font-weight:500;}
+.impact-source{font-size:10px;color:rgba(255,255,255,0.32);margin-top:4px;}
+
+.divider{height:1px;background:var(--border);margin:16px 0;}
+.ns-box{background:var(--surface3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.ns-lbl{font-size:10px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--green);margin-bottom:8px;}
+.ns-ta{width:100%;background:transparent;border:none;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;resize:none;outline:none;min-height:52px;line-height:1.65;}
+.ns-ta::placeholder{color:var(--muted);}
+
+/* STEP 3 */
+.qs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
+.qs-cell{background:var(--surface2);border-radius:9px;padding:12px 14px;}
+.qs-k{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;}
+.qs-v{font-size:14px;font-weight:600;line-height:1.4;}
+
+/* SHARE ACTIONS */
+.share-row{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.share-btn{display:flex;align-items:center;gap:12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-family:inherit;color:var(--text);text-decoration:none;transition:border-color .2s,background .2s;width:100%;}
+.share-btn:hover{border-color:var(--border-hi);background:var(--surface3);}
+.share-btn-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.share-btn-icon.green{background:var(--rec-d);border:1px solid rgba(46,204,113,0.3);}
+.share-btn-icon.blue{background:var(--evt-d);border:1px solid rgba(77,159,255,0.3);}
+.share-btn-icon.orange{background:var(--swag-d);border:1px solid rgba(255,122,53,0.3);}
+.share-btn-text{text-align:left;}
+.share-btn-title{font-size:14px;font-weight:700;}
+.share-btn-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+
+/* MOBILE BLUEPRINT DRAWER */
+.mobile-drawer{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  z-index:300;
+  transform:translateY(calc(100% - 56px));
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+}
+.mobile-drawer.expanded{transform:translateY(0);}
+.drawer-handle{
+  background:var(--surface2);border-top:1px solid var(--border);
+  border-radius:16px 16px 0 0;
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;user-select:none;
+}
+.drawer-pip{width:36px;height:4px;background:var(--border-hi);border-radius:2px;margin:0 auto 12px;}
+.drawer-handle-left{display:flex;align-items:center;gap:10px;}
+.drawer-pulse{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
+.drawer-pulse.idle{background:var(--muted);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.drawer-pulse.active{animation:pulse 1.5s ease infinite;}
+.drawer-title{font-size:14px;font-weight:700;}
+.drawer-sub{font-size:12px;color:var(--muted);}
+.drawer-chevron{font-size:16px;color:var(--muted);transition:transform .3s;}
+.mobile-drawer.expanded .drawer-chevron{transform:rotate(180deg);}
+.drawer-body{
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  max-height:70vh;overflow-y:auto;
+  padding:20px;
+}
+
+/* PRESENT MODE */
+.pm{display:none;position:fixed;inset:0;background:var(--bg);z-index:400;overflow-y:auto;padding:50px 60px;animation:fadeIn .35s ease;}
+.pm.on{display:block;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.pm-close{position:fixed;top:18px;right:22px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 18px;border-radius:7px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;z-index:401;}
+.pm-close:hover{background:var(--surface3);}
+.pm-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:46px;flex-wrap:wrap;gap:20px;}
+.pm-from{font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--orange);margin-bottom:8px;}
+.pm-title{font-size:40px;font-weight:900;letter-spacing:-1.3px;line-height:1.1;}
+.pm-title em{font-style:normal;color:var(--green);}
+.pm-prow{display:flex;align-items:center;gap:14px;}
+.pm-logo{width:46px;height:46px;background:linear-gradient(135deg,#FF4D6A,#4D9FFF);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;}
+.pm-pname{font-size:20px;font-weight:800;}
+.pm-pmeta{font-size:13px;color:var(--muted);margin-top:2px;}
+.pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+.pm-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px;}
+.pm-card-lbl{font-size:11px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.pm-pi{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;font-size:15px;line-height:1.5;}
+.pm-ck{width:20px;height:20px;border-radius:50%;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#000;}
+.pm-ck.s{background:var(--swag);}.pm-ck.r{background:var(--rec);}.pm-ck.e{background:var(--evt);}
+.pm-impact-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pm-impact-cell{background:var(--surface2);border-radius:9px;padding:14px;}
+.pm-impact-num{font-size:24px;font-weight:800;letter-spacing:-.5px;line-height:1;}
+.pm-impact-label{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.4;}
+.pm-impact-source{font-size:10px;color:rgba(255,255,255,0.28);margin-top:3px;}
+.pm-sol-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px;margin-bottom:20px;}
+.pm-tier-group{margin-bottom:18px;}
+.pm-tier-header{display:flex;align-items:center;gap:9px;margin-bottom:8px;}
+.pm-tier-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.pm-tier-dot.t0{background:var(--t0);}.pm-tier-dot.t1{background:var(--t1);}.pm-tier-dot.t2{background:var(--t2);}
+.pm-tier-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;}
+.pm-tier-lbl.t0{color:var(--t0);}.pm-tier-lbl.t1{color:var(--t1);}.pm-tier-lbl.t2{color:var(--t2);}
+.pm-tier-body{border-radius:11px;overflow:hidden;border:1px solid var(--border);}
+.pm-tier-body.t0{border-color:rgba(46,204,113,0.30);background:var(--t0-d);}
+.pm-tier-body.t1{border-color:rgba(77,159,255,0.22);background:var(--t1-d);}
+.pm-tier-body.t2{border-color:rgba(138,138,154,0.18);background:var(--t2-d);}
+.pm-sol-item{padding:16px 20px;}
+.pm-sol-item+.pm-sol-item{border-top:1px solid var(--border);}
+.pm-sol-name{font-size:16px;font-weight:700;margin-bottom:4px;}
+.pm-sol-why{font-size:14px;color:var(--muted);line-height:1.55;}
+.pm-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:20px;font-size:12px;color:var(--muted);flex-wrap:wrap;gap:10px;margin-top:20px;}
+
+/* DEAL ROOM */
+.deal-room{display:none;position:fixed;inset:0;background:var(--bg);z-index:500;overflow-y:auto;animation:fadeIn .3s ease;}
+.deal-room.on{display:block;}
+.dr-close{position:fixed;top:18px;right:22px;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 18px;border-radius:7px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;z-index:501;}
+.dr-close:hover{background:var(--surface3);}
+.dr-inner{max-width:780px;margin:0 auto;padding:56px 32px;}
+.dr-badge{display:inline-flex;align-items:center;gap:7px;background:var(--rec-d);border:1px solid rgba(46,204,113,0.3);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--green);margin-bottom:24px;}
+.dr-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease infinite;}
+.dr-title{font-size:32px;font-weight:900;letter-spacing:-.8px;line-height:1.15;margin-bottom:8px;}
+.dr-title em{font-style:normal;color:var(--green);}
+.dr-sub{font-size:15px;color:var(--muted);margin-bottom:36px;line-height:1.7;}
+.dr-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.dr-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.dr-card-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.dr-member{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.dr-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.dr-avatar.stadium{background:linear-gradient(135deg,var(--green),var(--blue));}
+.dr-avatar.prospect{background:var(--surface3);border:1.5px dashed var(--border-hi);color:var(--muted);}
+.dr-member-name{font-size:13px;font-weight:600;}
+.dr-member-role{font-size:11px;color:var(--muted);}
+.dr-member-badge{font-size:10px;background:var(--rec-d);color:var(--green);border-radius:4px;padding:2px 7px;font-weight:700;margin-left:auto;}
+.dr-add-input{width:100%;background:var(--surface3);border:1px dashed var(--border-hi);color:var(--text);font-family:inherit;font-size:13px;padding:10px 12px;border-radius:8px;outline:none;margin-top:8px;}
+.dr-add-input::placeholder{color:var(--muted);}
+.dr-add-btn{margin-top:8px;background:var(--surface3);border:1px solid var(--border);color:var(--mid);font-family:inherit;font-size:13px;font-weight:600;padding:9px 16px;border-radius:7px;cursor:pointer;width:100%;transition:all .15s;}
+.dr-add-btn:hover{border-color:var(--border-hi);color:var(--text);}
+.dr-summary{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;}
+.dr-focus-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.dr-chip{padding:6px 13px;border-radius:6px;font-size:13px;font-weight:600;}
+.dr-chip.s{background:var(--swag-d);color:var(--swag);border:1px solid rgba(255,122,53,0.3);}
+.dr-chip.r{background:var(--rec-d);color:var(--rec);border:1px solid rgba(46,204,113,0.3);}
+.dr-chip.e{background:var(--evt-d);color:var(--evt);border:1px solid rgba(77,159,255,0.3);}
+.dr-cta{background:var(--green);color:#000;border:none;font-family:inherit;font-size:16px;font-weight:700;padding:16px 28px;border-radius:10px;cursor:pointer;width:100%;transition:background .15s;margin-top:8px;}
+.dr-cta:hover{background:#27b562;}
+.dr-sent{display:none;text-align:center;padding:40px 20px;}
+.dr-sent-icon{font-size:48px;margin-bottom:16px;}
+.dr-sent-title{font-size:22px;font-weight:800;margin-bottom:8px;}
+.dr-sent-sub{font-size:14px;color:var(--muted);line-height:1.7;}
+
+/* MOBILE */
+@media(max-width:768px){
+  .hdr{padding:14px 18px;}
+  .logo-sub,.prog-lbl{display:none;}
+  .prog-pip{width:28px;}
+  .main{flex-direction:column;}
+  .left{padding:26px 20px;max-height:none;overflow-y:visible;padding-bottom:80px;}
+  .right{display:none;}
+  .mobile-drawer{display:block;}
+  .frow{grid-template-columns:1fr;}
+  .stitle{font-size:24px;}
+  .tile-hdr{padding:18px 18px;}
+  .tile-body{padding:0 18px 20px;}
+  .tile-name{font-size:16px;}
+  .brow{flex-direction:column;align-items:stretch;}
+  .brow .btn{width:100%;justify-content:center;}
+  .qs-grid{grid-template-columns:1fr;}
+  .pm{padding:28px 20px;}
+  .pm-grid{grid-template-columns:1fr;}
+  .pm-title{font-size:28px;}
+  .pm-top{flex-direction:column;}
+  .pm-sol-card,.pm-card{padding:20px;}
+  .pm-close{top:14px;right:14px;}
+  .dr-inner{padding:40px 20px;}
+  .dr-grid{grid-template-columns:1fr;}
+  .dr-title{font-size:26px;}
+}
+@media(max-width:480px){
+  .stitle{font-size:21px;}
+  .field input,.field select{font-size:16px;}
+  .impact-grid{grid-template-columns:1fr 1fr;}
+}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+<div style="display:flex;flex-direction:column;min-height:100vh;">
+
+<header class="hdr">
+  <div class="logo"><span style="font-size:22px;line-height:1;">✳️</span>Stadium<span class="logo-sub">Engagement Blueprint</span></div>
+  <div class="prog">
+    <div class="prog-pip active" id="pp1"></div>
+    <div class="prog-pip" id="pp2"></div>
+    <div class="prog-pip" id="pp3"></div>
+    <span class="prog-lbl" id="pLbl">About Your Company</span>
+  </div>
+</header>
+
+<div class="main">
+<div class="left" id="leftPanel">
+
+  <!-- STEP 1 -->
+  <div id="s1">
+    <div class="eyebrow">Step 1 of 3</div>
+    <h1 class="stitle">Let's start with the basics.</h1>
+    <p class="ssub">Tell us a little about your company so we can build something that actually fits.</p>
+    <div class="frow">
+      <div class="field"><label>Company name</label><input id="fCo" placeholder="e.g. Acme Corp" oninput="upd()"></div>
+      <div class="field"><label>Team size</label><input id="fHd" placeholder="e.g. ~500 employees" oninput="upd()"></div>
+    </div>
+    <div class="frow">
+      <div class="field"><label>Where are your people based?</label>
+        <select id="fCo2" onchange="upd()">
+          <option value="" selected disabled>Select...</option>
+          <option value="Mostly in one country">Mostly in one country</option>
+          <option value="US + a few other countries">US + a few other countries</option>
+          <option value="Across 10–20 countries">Across 10–20 countries</option>
+          <option value="Across 20–40 countries">Across 20–40 countries</option>
+          <option value="40+ countries globally">40+ countries globally</option>
+        </select>
+      </div>
+      <div class="field"><label>How does your team work?</label>
+        <select id="fWf" onchange="upd()">
+          <option value="" selected disabled>Select...</option>
+          <option value="Mostly remote / distributed">Mostly remote / distributed</option>
+          <option value="Hybrid — some office, some remote">Hybrid — some office, some remote</option>
+          <option value="Primarily in-office">Primarily in-office</option>
+          <option value="Fully remote, global">Fully remote, global</option>
+        </select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="field"><label>Current swag or gifting vendor(s)</label>
+        <select id="fVnd" onchange="upd()">
+          <option value="Nothing formal yet" selected>Nothing formal yet</option>
+          <option value="SwagUp">SwagUp</option>
+          <option value="Sendoso">Sendoso</option>
+          <option value="Reachdesk">Reachdesk</option>
+          <option value="Snappy">Snappy</option>
+          <option value="Printfection">Printfection</option>
+          <option value="PerkUp">PerkUp</option>
+          <option value="AXOMO">AXOMO</option>
+          <option value="Bonusly">Bonusly</option>
+          <option value="Nectar">Nectar</option>
+          <option value="Multiple vendors">Multiple vendors</option>
+          <option value="Handled in-house">Handled in-house</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="field"><label>HR platform</label>
+        <select id="fHR" onchange="upd()">
+          <option value="" selected disabled>Select if known...</option>
+          <option value="Workday">Workday</option>
+          <option value="Rippling">Rippling</option>
+          <option value="BambooHR">BambooHR</option>
+          <option value="HiBob">HiBob</option>
+          <option value="ADP">ADP</option>
+          <option value="UKG / Kronos">UKG / Kronos</option>
+          <option value="SAP SuccessFactors">SAP SuccessFactors</option>
+          <option value="Namely">Namely</option>
+          <option value="Gusto">Gusto</option>
+          <option value="Paychex">Paychex</option>
+          <option value="Other">Other</option>
+          <option value="Not sure">Not sure</option>
+        </select>
+      </div>
+    </div>
+    <div class="brow"><button class="btn btn-p" onclick="go(2)">Tell us what you need →</button></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="s2" style="display:none;">
+    <div class="eyebrow">Step 2 of 3</div>
+    <h1 class="stitle">Where do you feel the gaps?</h1>
+    <p class="ssub">Select the areas that resonate. Open as many as apply — your Blueprint builds as you go.</p>
+
+    <div class="area-tile" id="tSwag">
+      <div class="tile-hdr" onclick="toggleArea('swag')">
+        <div class="tile-icon">🗃️</div>
+        <div class="tile-meta">
+          <div class="tile-name">Swag & Branded Merchandise</div>
+          <div class="tile-quote">"We need a better system for getting branded gear to our people."</div>
+        </div>
+        <div class="tile-toggle" id="ttSwag">+</div>
+      </div>
+      <div class="tile-body">
+        <div class="field-pt"><label>How is swag currently stored and managed?</label>
+          <div class="chip-group" id="cgSto">
+            <button class="chip" onclick="pick(event,this,'cgSto','cs')" data-v="Office closet / random room">Office closet</button>
+            <button class="chip" onclick="pick(event,this,'cgSto','cs')" data-v="Third-party warehouse">3rd-party warehouse</button>
+            <button class="chip" onclick="pick(event,this,'cgSto','cs')" data-v="Multiple siloed locations">Multiple silos</button>
+            <button class="chip" onclick="pick(event,this,'cgSto','cs')" data-v="Nothing formal — ordered as needed">Nothing formal</button>
+          </div>
+        </div>
+        <div class="field-pt"><label>How often does swag get ordered?</label>
+          <div class="chip-group" id="cgSFq">
+            <button class="chip" onclick="pick(event,this,'cgSFq','cs')" data-v="Reactive — only when someone asks">Reactive only</button>
+            <button class="chip" onclick="pick(event,this,'cgSFq','cs')" data-v="Quarterly batch orders">Quarterly batches</button>
+            <button class="chip" onclick="pick(event,this,'cgSFq','cs')" data-v="Per-event rush orders">Per-event rushes</button>
+            <button class="chip" onclick="pick(event,this,'cgSFq','cs')" data-v="Ongoing but no real system">Ongoing / ad hoc</button>
+          </div>
+        </div>
+        <div class="field-pt"><label>Where does the current setup fall short? <span style="font-size:11px;color:var(--muted);font-weight:400;">(select all that apply)</span></label>
+          <div class="chip-group" id="cgSFr">
+            <button class="chip" onclick="multi(event,this,'cs')" data-v="Logistics & fulfillment speed">Logistics & speed</button>
+            <button class="chip" onclick="multi(event,this,'cs')" data-v="Cost overruns and waste">Cost & waste</button>
+            <button class="chip" onclick="multi(event,this,'cs')" data-v="Juggling multiple vendors">Vendor juggling</button>
+            <button class="chip" onclick="multi(event,this,'cs')" data-v="No visibility into what we have">No visibility</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="area-tile" id="tRec">
+      <div class="tile-hdr" onclick="toggleArea('rec')">
+        <div class="tile-icon">🏆</div>
+        <div class="tile-meta">
+          <div class="tile-name">Employee Recognition & Culture</div>
+          <div class="tile-quote">"We want our people to feel genuinely valued — especially those working remotely."</div>
+        </div>
+        <div class="tile-toggle" id="ttRec">+</div>
+      </div>
+      <div class="tile-body">
+        <div class="field-pt"><label>How is recognition handled today?</label>
+          <div class="chip-group" id="cgRM">
+            <button class="chip" onclick="pick(event,this,'cgRM','cr')" data-v="Manager shoutouts — inconsistent across teams">Manager shoutouts</button>
+            <button class="chip" onclick="pick(event,this,'cgRM','cr')" data-v="Nothing formal in place">Nothing formal</button>
+            <button class="chip" onclick="pick(event,this,'cgRM','cr')" data-v="Existing tool — but underutilized">Existing tool</button>
+            <button class="chip" onclick="pick(event,this,'cgRM','cr')" data-v="Slack reactions / ad hoc praise">Slack / ad hoc</button>
+          </div>
+        </div>
+        <div class="field-pt"><label>What's the biggest gap? <span style="font-size:11px;color:var(--muted);font-weight:400;">(select all that apply)</span></label>
+          <div class="chip-group" id="cgRG">
+            <button class="chip" onclick="multi(event,this,'cr')" data-v="Consistency — it depends on who your manager is">Consistency</button>
+            <button class="chip" onclick="multi(event,this,'cr')" data-v="Visibility — recognition isn't seen company-wide">Visibility</button>
+            <button class="chip" onclick="multi(event,this,'cr')" data-v="Global reach — remote employees miss out">Global reach</button>
+            <button class="chip" onclick="multi(event,this,'cr')" data-v="Meaningful reward options employees actually want">Reward quality</button>
+          </div>
+        </div>
+        <div class="field-pt"><label>Which moments matter most? <span style="font-size:11px;color:var(--muted);font-weight:400;">(select all that apply)</span></label>
+          <div class="chip-group" id="cgMS">
+            <button class="chip" onclick="multi(event,this,'cr')" data-v="Work anniversaries">Work anniversaries</button>
+            <button class="chip" onclick="multi(event,this,'cr')" data-v="Birthdays">Birthdays</button>
+            <button class="chip" onclick="multi(event,this,'cr')" data-v="New hire onboarding">New hire onboarding</button>
+            <button class="chip" onclick="multi(event,this,'cr')" data-v="Promotions">Promotions</button>
+            <button class="chip" onclick="multi(event,this,'cr')" data-v="Performance wins">Performance wins</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="area-tile" id="tEvt">
+      <div class="tile-hdr" onclick="toggleArea('evt')">
+        <div class="tile-icon">🎪</div>
+        <div class="tile-meta">
+          <div class="tile-name">Events & Client Gifting</div>
+          <div class="tile-quote">"Events, conferences, and client gifting take way more effort than they should."</div>
+        </div>
+        <div class="tile-toggle" id="ttEvt">+</div>
+      </div>
+      <div class="tile-body">
+        <div class="field-pt"><label>How many events do you run per year?</label>
+          <div class="chip-group" id="cgEC">
+            <button class="chip" onclick="pick(event,this,'cgEC','ce')" data-v="1–5 events/year">1–5</button>
+            <button class="chip" onclick="pick(event,this,'cgEC','ce')" data-v="6–15 events/year">6–15</button>
+            <button class="chip" onclick="pick(event,this,'cgEC','ce')" data-v="15+ events/year">15+</button>
+          </div>
+        </div>
+        <div class="field-pt"><label>How do you handle event swag today?</label>
+          <div class="chip-group" id="cgES">
+            <button class="chip" onclick="pick(event,this,'cgES','ce')" data-v="Same vendor as general swag">Same as general swag</button>
+            <button class="chip" onclick="pick(event,this,'cgES','ce')" data-v="Different vendor per event">Different vendor each time</button>
+            <button class="chip" onclick="pick(event,this,'cgES','ce')" data-v="Handled in-house">In-house</button>
+            <button class="chip" onclick="pick(event,this,'cgES','ce')" data-v="No consistent approach">No consistent approach</button>
+          </div>
+        </div>
+        <div class="field-pt"><label>What causes the most friction? <span style="font-size:11px;color:var(--muted);font-weight:400;">(select all that apply)</span></label>
+          <div class="chip-group" id="cgEP">
+            <button class="chip" onclick="multi(event,this,'ce')" data-v="Advance shipping deadlines">Advance shipping</button>
+            <button class="chip" onclick="multi(event,this,'ce')" data-v="Customs & international logistics">International / customs</button>
+            <button class="chip" onclick="multi(event,this,'ce')" data-v="Last-minute orders and rush fees">Last-minute rushes</button>
+            <button class="chip" onclick="multi(event,this,'ce')" data-v="No tracking or visibility">No tracking</button>
+          </div>
+        </div>
+        <div class="field-pt"><label>What's your client or prospect gifting situation?</label>
+          <div class="chip-group" id="cgCG">
+            <button class="chip" onclick="pick(event,this,'cgCG','ce')" data-v="Active ABM / retention gifting program">Active gifting motion</button>
+            <button class="chip" onclick="pick(event,this,'cgCG','ce')" data-v="Ad hoc — we send things occasionally">Ad hoc / occasional</button>
+            <button class="chip" onclick="pick(event,this,'cgCG','ce')" data-v="Interested but haven't built a program yet">Interested, not started</button>
+            <button class="chip" onclick="pick(event,this,'cgCG','ce')" data-v="Not something we do currently">Not a focus yet</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brow" style="margin-top:22px;">
+      <button class="btn btn-g" onclick="go(1)">← Back</button>
+      <button class="btn btn-p" id="btnS2" onclick="go(3)" disabled>See your Blueprint →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div id="s3" style="display:none;">
+    <div class="eyebrow">Step 3 of 3</div>
+    <h1 class="stitle">Your Engagement Blueprint.</h1>
+    <p class="ssub">Here's what a Stadium solution looks like for your team — built from what you just told us.</p>
+    <div id="qsGrid" class="qs-grid"></div>
+
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:18px 20px;margin-bottom:20px;">
+      <div style="font-size:14px;font-weight:600;color:var(--mid);margin-bottom:6px;">Ready to share?</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.6;">View your full Blueprint first — sharing options are available there once you've reviewed everything.</div>
+    </div>
+
+    <button class="btn btn-present" onclick="openPM()">↗ View full Blueprint</button>
+    <div class="brow" style="margin-top:12px;">
+      <button class="btn btn-g" onclick="go(2)">← Go back</button>
+      <button class="btn btn-g" onclick="if(confirm('Start over?'))location.reload()">↺ Start over</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right">
+  <div class="bp-lbl">Your Blueprint</div>
+  <div class="prospect-card" id="prospectCard" style="display:none;">
+    <div class="p-logo" id="bpLogo">?</div>
+    <div><div class="p-name" id="bpName"></div><div class="p-meta" id="bpMeta"></div></div>
+  </div>
+  <div class="bp-empty" id="bpEmpty">
+    <div class="bp-empty-icon">◎</div>
+    <div class="bp-empty-txt">Open an area on the left and answer a question or two — your Blueprint assembles here in real time.</div>
+  </div>
+  <div id="bpContent" style="display:none;">
+    <div class="bp-sec" id="bpPS" style="display:none;">
+      <div class="bp-sec-lbl">Areas selected</div>
+      <div id="bpPL"></div>
+    </div>
+    <div class="divider" id="d1" style="display:none;"></div>
+    <div class="bp-sec" id="bpSS" style="display:none;">
+      <div class="bp-sec-lbl">Recommended solution</div>
+      <div id="bpSM"></div>
+    </div>
+    <div class="divider" id="d2" style="display:none;"></div>
+    <div class="bp-sec" id="bpCS" style="display:none;">
+      <div class="bp-sec-lbl">Complexity reduction</div>
+      <div class="cx2-block">
+        <div class="cx2-headline">
+          <div class="cx2-pct" id="cx2Pct">—</div>
+          <div class="cx2-lbl">estimated complexity reduction with Stadium</div>
+        </div>
+        <div class="cx2-bars">
+          <div class="cx2-bar-row">
+            <div class="cx2-bar-lbl now">Now</div>
+            <div class="cx2-bar-track"><div class="cx2-bar-fill now" id="cx2NowBar" style="width:0%"></div></div>
+            <div class="cx2-bar-tag" id="cx2NowTag" style="color:var(--red);font-weight:700;font-size:10px;">—</div>
+          </div>
+          <div class="cx2-bar-row">
+            <div class="cx2-bar-lbl st">Stadium</div>
+            <div class="cx2-bar-track"><div class="cx2-bar-fill st" id="cx2StBar" style="width:0%"></div></div>
+            <div class="cx2-bar-tag" id="cx2StTag" style="color:var(--green);font-weight:700;font-size:10px;">—</div>
+          </div>
+        </div>
+        <div class="cx2-drivers">
+          <div class="cx2-drivers-lbl">Based on</div>
+          <div id="cx2Drivers"></div>
+        </div>
+      </div>
+    </div>
+    <div class="divider" id="d3" style="display:none;"></div>
+    <div class="bp-sec" id="bpStats" style="display:none;">
+      <div class="bp-sec-lbl">Stadium at a glance</div>
+      <div class="bp-stat-grid" id="bpStatGrid"></div>
+    </div>
+    <div class="divider" id="d4" style="display:none;"></div>
+    <div class="ns-box" id="bpNS" style="display:none;">
+      <div class="ns-lbl">Next Step</div>
+      <textarea class="ns-ta" id="nsMirror" placeholder="Captured in Step 3 →" readonly></textarea>
+    </div>
+  </div>
+</div>
+</div><!-- /main -->
+
+<!-- MOBILE BLUEPRINT DRAWER -->
+<div class="mobile-drawer" id="mobileDrawer">
+  <div class="drawer-handle" onclick="toggleDrawer()">
+    <div style="width:36px;height:4px;background:var(--border-hi);border-radius:2px;position:absolute;top:10px;left:50%;transform:translateX(-50%);"></div>
+    <div class="drawer-handle-left" style="margin-top:6px;">
+      <div class="drawer-pulse idle" id="drawerPulse"></div>
+      <div>
+        <div class="drawer-title" id="drawerTitle">Your Blueprint</div>
+        <div class="drawer-sub" id="drawerSub">Answer questions to start building</div>
+      </div>
+    </div>
+    <div class="drawer-chevron" id="drawerChevron">⌃</div>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+
+</div><!-- /app -->
+
+<!-- PRESENT MODE -->
+<div class="pm" id="pm">
+  <button class="pm-close" onclick="closePM()">✕ Close</button>
+  <div class="pm-top">
+    <div>
+      <div class="pm-from">Your Engagement Blueprint</div>
+      <div class="pm-title">Built for <em id="pmCo">your team</em></div>
+    </div>
+    <div class="pm-prow" id="pmPRow" style="display:none;">
+      <div class="pm-logo" id="pmLogo"></div>
+      <div><div class="pm-pname" id="pmPN"></div><div class="pm-pmeta" id="pmPM"></div></div>
+    </div>
+  </div>
+  <div class="pm-grid">
+    <div class="pm-card"><div class="pm-card-lbl">Areas you selected</div><div id="pmPains"></div></div>
+    <div class="pm-card">
+      <div class="pm-card-lbl">Complexity reduction</div>
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:12px;">
+          <div style="font-size:32px;font-weight:900;letter-spacing:-.8px;color:var(--green);line-height:1;" id="pmCxPct">—</div>
+          <div style="font-size:13px;color:var(--mid);font-weight:600;">estimated reduction with Stadium</div>
+        </div>
+        <div class="cx2-bar-row" style="margin-bottom:8px;">
+          <div class="cx2-bar-lbl now">Now</div>
+          <div class="cx2-bar-track"><div class="cx2-bar-fill now" id="pmCxNowBar" style="width:0%"></div></div>
+          <div id="pmCxNowTag" style="font-size:11px;font-weight:700;color:var(--red);width:46px;flex-shrink:0;">—</div>
+        </div>
+        <div class="cx2-bar-row">
+          <div class="cx2-bar-lbl st">Stadium</div>
+          <div class="cx2-bar-track"><div class="cx2-bar-fill st" id="pmCxStBar" style="width:0%"></div></div>
+          <div id="pmCxStTag" style="font-size:11px;font-weight:700;color:var(--green);width:46px;flex-shrink:0;">—</div>
+        </div>
+      </div>
+      <div class="cx2-drivers">
+        <div class="cx2-drivers-lbl">Based on</div>
+        <div id="pmCxDrivers"></div>
+      </div>
+    </div>
+  </div>
+  <div class="pm-card" style="margin-bottom:20px;">
+    <div class="pm-card-lbl">Stadium by the numbers</div>
+    <div class="pm-impact-grid" id="pmImpact"></div>
+  </div>
+  <div class="pm-sol-card"><div class="pm-card-lbl">Your Stadium solution — sequenced</div><div id="pmSols"></div></div>
+  <div style="margin-bottom:28px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">What would you like to do next?</div>
+    <div class="share-row">
+      <button class="share-btn" onclick="openProjectSpace()">
+        <div class="share-btn-icon green">🤝</div>
+        <div class="share-btn-text">
+          <div class="share-btn-title">Open a shared project space</div>
+          <div class="share-btn-sub">Invite your team — a Stadium rep joins automatically</div>
+        </div>
+      </button>
+      <button class="share-btn" onclick="downloadPDF()">
+        <div class="share-btn-icon blue">📄</div>
+        <div class="share-btn-text">
+          <div class="share-btn-title">Download as PDF</div>
+          <div class="share-btn-sub">Save your Blueprint to share offline</div>
+        </div>
+      </button>
+      <button class="share-btn" onclick="emailBlueprint()">
+        <div class="share-btn-icon orange">✉️</div>
+        <div class="share-btn-text">
+          <div class="share-btn-title">Email me this Blueprint</div>
+          <div class="share-btn-sub">Get a copy sent straight to your inbox</div>
+        </div>
+      </button>
+    </div>
+  </div>
+  <div class="pm-footer">
+    <div>Powered by Stadium · bystadium.com · 10,000+ companies · G2 rated 4.8★ (2,164 reviews)</div>
+    <div style="font-size:16px;font-weight:900;letter-spacing:-.3px;">✳️ Stadium</div>
+  </div>
+</div>
+
+<!-- DEAL ROOM -->
+<div class="deal-room" id="dealRoom">
+  <button class="dr-close" onclick="closeProjectSpace()">✕ Close</button>
+  <div class="dr-inner">
+    <div id="drMain">
+      <div class="dr-badge"><div class="dr-badge-dot"></div>Your shared project space is ready</div>
+      <h1 class="dr-title">A space built for <em id="drCo">your team</em></h1>
+      <p class="dr-sub" id="drSub">Based on what you shared, we've put together a focused workspace. A Stadium rep has been notified and will join shortly — add your stakeholders below so everyone's in the loop.</p>
+
+      <div class="dr-grid">
+        <div class="dr-card">
+          <div class="dr-card-lbl">Space members</div>
+          <div id="drMembers">
+            <div class="dr-member">
+              <div class="dr-avatar stadium">S</div>
+              <div><div class="dr-member-name">Stadium Sales</div><div class="dr-member-role">Your dedicated rep</div></div>
+              <div class="dr-member-badge">● Live</div>
+            </div>
+          </div>
+          <input class="dr-add-input" id="drEmailInput" placeholder="Add teammate by email..." type="email">
+          <button class="dr-add-btn" onclick="addMember()">+ Add to space</button>
+        </div>
+
+        <div class="dr-card">
+          <div class="dr-card-lbl">Your Blueprint summary</div>
+          <div class="dr-summary">
+            <div style="font-size:13px;font-weight:600;color:var(--mid);margin-bottom:8px;">Focus areas</div>
+            <div class="dr-focus-chips" id="drFocusChips"></div>
+            <div style="margin-top:14px;font-size:13px;color:var(--muted);line-height:1.6;" id="drSummaryText"></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="dr-cta" onclick="submitProjectSpace()">Notify Stadium & open the space →</button>
+      <div style="font-size:12px;color:var(--muted);text-align:center;margin-top:12px;">A Stadium rep will reach out within one business day. No commitment required.</div>
+    </div>
+
+    <div class="dr-sent" id="drSent">
+      <div class="dr-sent-icon">✅</div>
+      <div class="dr-sent-title">Space created. Stadium notified.</div>
+      <div class="dr-sent-sub">Your Blueprint has been shared with the Stadium team. Expect a message within one business day.<br><br>Check your inbox — a copy of your Blueprint is on its way.</div>
+      <button class="btn btn-p" style="margin:24px auto 0;display:flex;" onclick="closeProjectSpace()">Back to Blueprint</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── HELPERS ──
+function arr(val,fallback){
+  if(Array.isArray(val)&&val.length)return val.map(v=>v.toLowerCase()).join(', ');
+  if(typeof val==='string'&&val)return val.toLowerCase();
+  return fallback;
+}
+function parseHd(hd){if(!hd)return 0;const n=parseInt(hd.replace(/[^0-9]/g,''));return isNaN(n)?0:n;}
+function nextLabel(i,hd){
+  const size=parseHd(hd);
+  if(i===0)return 'Start here';
+  if(i===1)return size>1000?'Expand across teams':"When you're ready";
+  return 'Down the road';
+}
+
+// ── DATA ──
+function D(){
+  return{
+    co:document.getElementById('fCo').value.trim(),
+    hd:document.getElementById('fHd').value.trim(),
+    co2:document.getElementById('fCo2').value,
+    wf:document.getElementById('fWf').value,
+    vnd:document.getElementById('fVnd').value,
+    hr:document.getElementById('fHR').value,
+    hasSwag:hasAns('swag'),hasRec:hasAns('rec'),hasEvt:hasAns('evt'),
+    swag:{sto:gv('cgSto'),freq:gv('cgSFq'),frust:gm('cgSFr')},
+    rec:{meth:gv('cgRM'),gap:gm('cgRG'),ms:gm('cgMS')},
+    evt:{cnt:gv('cgEC'),swag:gv('cgES'),pain:gm('cgEP'),gift:gv('cgCG')},
+  };
+}
+function hasAns(p){
+  const g={swag:['cgSto','cgSFq','cgSFr'],rec:['cgRM','cgRG','cgMS'],evt:['cgEC','cgES','cgEP','cgCG']};
+  return g[p].some(id=>!!document.querySelector('#'+id+' .chip.cs,#'+id+' .chip.cr,#'+id+' .chip.ce'));
+}
+function gv(g){const s=document.querySelector('#'+g+' .chip.cs,#'+g+' .chip.cr,#'+g+' .chip.ce');return s?s.dataset.v:null;}
+function gm(g){return[...document.querySelectorAll('#'+g+' .chip')].filter(c=>c.classList.contains('cs')||c.classList.contains('cr')||c.classList.contains('ce')).map(c=>c.dataset.v);}
+
+// ── NAV ──
+function go(n){
+  [1,2,3].forEach(i=>document.getElementById('s'+i).style.display=i===n?'block':'none');
+  const lbls=['About Your Company','Where You Feel the Gaps','Your Blueprint'];
+  ['pp1','pp2','pp3'].forEach((id,i)=>{
+    document.getElementById(id).className='prog-pip'+(i+1<n?' done':i+1===n?' active':'');
+  });
+  document.getElementById('pLbl').textContent=lbls[n-1];
+  window.scrollTo({top:0,behavior:'smooth'});
+  upd();
+  if(n===3)buildQS();
+}
+
+// ── TILES ──
+function toggleArea(p){
+  const tile=document.getElementById('t'+cap(p));
+  const isOpen=tile.classList.contains('open-'+p);
+  if(isOpen){tile.className='area-tile';document.getElementById('tt'+cap(p)).textContent='+';}
+  else{tile.classList.add('open-'+p);document.getElementById('tt'+cap(p)).textContent='✓';}
+  upd();
+}
+function cap(s){return s[0].toUpperCase()+s.slice(1);}
+
+// ── CHIPS ──
+function pick(e,el,grp,cls){
+  e.stopPropagation();
+  document.querySelectorAll('#'+grp+' .chip').forEach(c=>c.className='chip');
+  el.className='chip '+cls;upd();
+}
+function multi(e,el,cls){e.stopPropagation();el.classList.toggle(cls);upd();}
+
+// ── COMPLEXITY CALC ──
+function calcComplexity(d){
+  let score = 0;
+  const drivers = [];
+
+  // Vendor fragmentation
+  if(d.vnd === 'Multiple vendors'){
+    score += 25;
+    drivers.push('Multiple vendors to manage and coordinate across');
+  } else if(d.vnd && d.vnd !== 'Nothing formal yet'){
+    score += 12;
+    drivers.push(`Current vendor (${d.vnd}) replaced by one unified platform`);
+  } else {
+    score += 8;
+    drivers.push('No formal vendor — ad hoc process replaced with structure');
+  }
+
+  // Areas selected — each = another team, budget, and workflow
+  const n = [d.hasSwag,d.hasRec,d.hasEvt].filter(Boolean).length;
+  if(n >= 3){ score += 20; drivers.push('3 separate programs (swag, recognition, events) consolidated into one'); }
+  else if(n === 2){ score += 12; drivers.push('2 separate programs consolidated into one platform'); }
+
+  // Swag-specific
+  if(d.hasSwag){
+    if(d.swag.sto && d.swag.sto.includes('closet')){ score += 10; drivers.push('Manual storage replaced by off-site warehousing'); }
+    else if(d.swag.sto && d.swag.sto.includes('silo')){ score += 14; drivers.push('Siloed inventory locations replaced by centralised warehouse'); }
+    if(d.swag.freq && d.swag.freq.includes('Reactive')){ score += 8; drivers.push('Reactive ordering replaced by on-demand fulfilment'); }
+    if(d.swag.freq && d.swag.freq.includes('rush')){ score += 8; drivers.push('Per-event rush orders replaced by pre-stocked on-demand'); }
+  }
+
+  // Recognition-specific
+  if(d.hasRec){
+    if(d.rec.meth && (d.rec.meth.includes('Nothing') || d.rec.meth.includes('shoutouts') || d.rec.meth.includes('Slack'))){ score += 12; drivers.push('Manual/inconsistent recognition replaced by automated programs'); }
+    if(d.rec.gap && d.rec.gap.some && d.rec.gap.some(g => g.includes('Consistency'))){ score += 8; drivers.push('Manager-dependent recognition replaced by platform-enforced consistency'); }
+    if(d.wf && d.wf.toLowerCase().includes('remote')){ score += 6; drivers.push('Distributed workforce — remote fulfilment eliminates geographic friction'); }
+  }
+
+  // Events-specific
+  if(d.hasEvt){
+    if(d.evt.pain && d.evt.pain.some && d.evt.pain.some(p => p.includes('Customs'))){ score += 10; drivers.push('International customs and shipping managed locally in 170+ countries via Stadium'); }
+    if(d.evt.pain && d.evt.pain.some && d.evt.pain.some(p => p.includes('Last-minute'))){ score += 8; drivers.push('Last-minute rush orders replaced by pre-planned on-demand'); }
+    if(d.evt.swag && d.evt.swag.includes('Different')){ score += 8; drivers.push('Different vendor per event replaced by single platform'); }
+  }
+
+  // Geography multiplier
+  if(d.co2 && (d.co2.includes('20–40') || d.co2.includes('40+'))){ score += 8; drivers.push('Global footprint — local fulfilment in 170+ countries reduces logistics overhead'); }
+  else if(d.co2 && d.co2.includes('10–20')){ score += 5; drivers.push('Multi-country presence — local fulfilment simplifies cross-border delivery'); }
+
+  score = Math.min(score, 92);
+  const stadiumScore = Math.max(8, Math.round(score * 0.28));
+  const pct = Math.round(((score - stadiumScore) / score) * 100);
+
+  const nowLbl = score > 75 ? 'High' : score > 50 ? 'Medium' : 'Moderate';
+  const stLbl  = stadiumScore > 20 ? 'Low' : 'Minimal';
+
+  return { score, stadiumScore, pct, nowLbl, stLbl, drivers: drivers.slice(0, 4) };
+}
+
+// ── PLATFORM STATS (for present mode) ──
+function platformStats(d){
+  const stats = [
+    {num:'170+', label:'Countries fulfilled locally', source:'Stadium platform'},
+    {num:'15K+', label:'Items in the gift catalog', source:'Stadium platform'},
+  ];
+  if(d.hasRec){
+    stats.push({num:'4.8★', label:'G2 rating from 2,164 reviews', source:'G2.com'});
+    stats.push({num:'2,000+', label:'HRIS, CRM & ATS integrations', source:'Stadium platform'});
+  } else {
+    stats.push({num:'500+', label:'Warehouse locations globally', source:'Stadium platform'});
+    stats.push({num:'10K+', label:'Companies trust Stadium', source:'Stadium platform'});
+  }
+  return stats.slice(0,4);
+}
+
+// ── LIVE UPDATE ──
+function upd(){
+  const d=D();
+  // Prospect card
+  const card=document.getElementById('prospectCard');
+  if(d.co){
+    card.style.display='flex';
+    document.getElementById('bpLogo').textContent=d.co[0].toUpperCase();
+    document.getElementById('bpName').textContent=d.co;
+    const meta=[d.hd,d.co2,d.wf?d.wf.split('—')[0].trim():''].filter(Boolean);
+    document.getElementById('bpMeta').textContent=meta.join(' · ');
+  } else {card.style.display='none';}
+
+  const any=d.hasSwag||d.hasRec||d.hasEvt;
+  document.getElementById('bpEmpty').style.display=any?'none':'block';
+  document.getElementById('bpContent').style.display=any?'block':'none';
+  const btn=document.getElementById('btnS2');
+  if(btn)btn.disabled=!any;
+  updateMobileDrawer(d,any);
+  if(!any)return;
+
+  // Pain rows
+  let ph='';
+  if(d.hasSwag)ph+=`<div class="pain-row"><div class="pdot s"></div><div><strong style="color:var(--swag)">Swag & Merchandise</strong>${d.swag.frust?.length?' — '+arr(d.swag.frust,''):''}</div></div>`;
+  if(d.hasRec)ph+=`<div class="pain-row"><div class="pdot r"></div><div><strong style="color:var(--rec)">Recognition & Culture</strong>${d.rec.gap?.length?' — '+arr(d.rec.gap,''):''}</div></div>`;
+  if(d.hasEvt)ph+=`<div class="pain-row"><div class="pdot e"></div><div><strong style="color:var(--evt)">Events & Gifting</strong>${d.evt.pain?.length?' — '+arr(d.evt.pain,''):''}</div></div>`;
+  document.getElementById('bpPL').innerHTML=ph;
+  document.getElementById('bpPS').style.display='block';
+  document.getElementById('d1').style.display='block';
+
+  // Solutions
+  const sols=buildSols(d);
+  const tierMap=[
+    {key:'t0',lbl:nextLabel(0,d.hd),items:sols.filter((_,i)=>i===0)},
+    {key:'t1',lbl:nextLabel(1,d.hd),items:sols.filter((_,i)=>i===1)},
+    {key:'t2',lbl:nextLabel(2,d.hd),items:sols.filter((_,i)=>i>=2)},
+  ].filter(t=>t.items.length);
+  document.getElementById('bpSM').innerHTML=tierMap.map(t=>`
+    <div class="tier-group">
+      <div class="tier-header"><div class="tier-dot ${t.key}"></div><div class="tier-lbl ${t.key}">${t.lbl}</div></div>
+      <div class="tier-body ${t.key}">${t.items.map(s=>`<div class="sol-item"><div class="sol-name">${s.name}</div><div class="sol-why">${s.why}</div></div>`).join('')}</div>
+    </div>`).join('');
+  document.getElementById('bpSS').style.display='block';
+  document.getElementById('d2').style.display='block';
+
+  // Complexity
+  const cx = calcComplexity(d);
+  setTimeout(()=>{
+    document.getElementById('cx2NowBar').style.width = cx.score+'%';
+    document.getElementById('cx2StBar').style.width  = cx.stadiumScore+'%';
+  }, 80);
+  document.getElementById('cx2Pct').textContent     = cx.pct+'%';
+  document.getElementById('cx2NowTag').textContent  = cx.nowLbl;
+  document.getElementById('cx2StTag').textContent   = cx.stLbl;
+  document.getElementById('cx2Drivers').innerHTML   = cx.drivers.map(dr=>
+    `<div class="cx2-driver"><div class="cx2-driver-dot"></div>${dr}</div>`).join('');
+  document.getElementById('bpCS').style.display='block';
+
+  // Platform stats
+  const stats=platformStats(d);
+  document.getElementById('bpStatGrid').innerHTML=stats.map(m=>`
+    <div class="bp-stat-cell">
+      <div class="bp-stat-num" style="color:var(--green)">${m.num}</div>
+      <div class="bp-stat-label">${m.label}</div>
+      <div class="bp-stat-source">${m.source}</div>
+    </div>`).join('');
+  document.getElementById('bpStats').style.display='block';
+  document.getElementById('d3').style.display='block';
+  document.getElementById('d4').style.display='block';
+  document.getElementById('d3').style.display='block';
+  document.getElementById('bpNS').style.display='block';
+
+  // Sync drawer
+  syncDrawerContent();
+}
+
+// ── SOLUTIONS ──
+function buildSols(d){
+  const sols=[],n=[d.hasSwag,d.hasRec,d.hasEvt].filter(Boolean).length;
+  const knownHR=d.hr&&d.hr!==''&&d.hr!=='Not sure';
+  const hrisLbl=knownHR?d.hr:'your HR platform';
+  const hasVnd=d.vnd&&d.vnd!=='Nothing formal yet';
+  const multiVnd=d.vnd==='Multiple vendors';
+  const size=parseHd(d.hd);
+  const isLarge=size>=500;
+  const isEnterprise=size>=1000;
+
+  if(d.hasSwag){
+    const stoDesc=d.swag.sto&&d.swag.sto!=='Nothing formal — ordered as needed'?`No more ${d.swag.sto.toLowerCase()} situations.`:'No more scrambling to find what you have or where it is.';
+    const scaleNote=isEnterprise?' At your scale, on-demand fulfillment across multiple offices and regions becomes a real operational advantage.':isLarge?' Especially valuable as your team grows and swag requests multiply.':'';
+    sols.push({name:'Warehousing + On-Demand Fulfillment',why:`Your branded inventory lives off-site in a Stadium warehouse — organized, tracked, and ready to ship anywhere. ${stoDesc} Order exactly what you need, when you need it. No minimums, no overstock, no waste.${multiVnd?' One platform replaces the vendor sprawl.':hasVnd?' Consolidates everything you were managing through '+d.vnd+'.':''}${scaleNote}`});
+    if(n===1){
+      sols.push({name:'Stadium Shops',why:`Give your team a branded store where they choose the gear they actually want. Higher satisfaction, less guesswork — and no more one-size-fits-all swag drops nobody asked for.`});
+      sols.push({name:'Kudos & Milestone Programs',why:`Once your swag infrastructure is in place, layering in employee recognition becomes effortless — automated gifting for work anniversaries, new hires, promotions, and more.`});
+    }
+  }
+  if(d.hasRec){
+    const land=!d.hasSwag;
+    const ms=d.rec.ms?.length?d.rec.ms.slice(0,2).join(' and '):'key milestones';
+    const gapStr=arr(d.rec.gap,'consistency across teams');
+    const remoteNote=d.wf&&d.wf.toLowerCase().includes('remote')?' Built to work across time zones and borders — remote employees get the same experience as everyone in the office.':gapStr.includes('global')||gapStr.includes('remote')?' Built for distributed teams — recognition that reaches everyone, everywhere.':'';
+    const scaleNote=isEnterprise?` At ${size.toLocaleString()}+ employees, manual recognition doesn't scale — automation ensures no one gets missed.`:'';
+    sols.push({name:land?'Kudos + Milestone Automation':'Recognition Programs',why:`Make recognition consistent, visible, and meaningful for every employee. Peer-to-peer kudos, manager shoutouts, and automated gifting for ${ms}${knownHR?`, synced directly with ${hrisLbl}`:''}.${remoteNote}${scaleNote}`});
+    if(n===1){
+      sols.push({name:'Stadium Shops',why:`Employees redeem recognition points for swag and gifts they actually want — from a catalog of 15,000+ items they choose themselves.`});
+      sols.push({name:'SnackMagic & Remote Gifting',why:`Delight your distributed team at scale — curated snack boxes, all-hands celebration kits, and team appreciation moments delivered anywhere in the world.`});
+    }
+  }
+  if(d.hasEvt){
+    const land=!d.hasSwag&&!d.hasRec;
+    const evtCnt=d.evt.cnt||'your events';
+    const intlNote=d.co2&&!d.co2.includes('one country')?' With your global footprint, local fulfillment across 500+ warehouse locations means no more international shipping nightmares.':'';
+    sols.push({name:land?'On-Demand Event Swag & Fulfillment':'Bulk Swag + Event Fulfillment',why:`Stadium handles ${evtCnt} end-to-end — from branded merchandise to on-site fulfillment. No advance shipping deadlines to chase, no customs headaches, no last-minute panic. Your team shows up ready.${intlNote}`});
+    if(d.evt.gift&&d.evt.gift.includes('Active')){
+      sols.push({name:'Prospect & Client Gifting',why:`Run your ABM and client retention gifting through the same platform — personalized gifts sent at exactly the right moment in the buyer journey, trackable and on-brand.`});
+    } else if(n===1){
+      sols.push({name:'Prospect & Client Gifting',why:`When you're ready, Stadium can power your client and prospect gifting too — same platform, same catalog, fully trackable. A natural next step once your events motion is running smoothly.`});
+      sols.push({name:'Employee Recognition Layer',why:`Bring HR onto the same platform — milestone programs, peer kudos, and new hire onboarding kits all running on the same infrastructure as your events swag.`});
+    }
+  }
+  if(n>1)sols.push({name:'Unified Platform + Reporting',why:`Every program — swag, recognition, events, gifting — managed from one place. One budget, one login, one view of what's working. No more coordinating across vendors, spreadsheets, or siloed teams.`});
+  return sols;
+}
+
+// ── QUICK STATS ──
+function buildQS(){
+  const d=D();
+  const rows=[
+    ['Company',d.co],['Team size',d.hd],
+    ['Location',d.co2],['Workforce',d.wf?d.wf.split('—')[0].trim():null],
+    ['HR platform',d.hr&&d.hr!=='Not sure'?d.hr:null],
+    ['Current vendor',d.vnd&&d.vnd!=='Nothing formal yet'?d.vnd:null],
+    ['Focus areas',[d.hasSwag&&'Swag',d.hasRec&&'Recognition',d.hasEvt&&'Events'].filter(Boolean).join(', ')||null],
+  ].filter(([,v])=>v);
+  document.getElementById('qsGrid').innerHTML=rows.map(([k,v])=>`<div class="qs-cell"><div class="qs-k">${k}</div><div class="qs-v">${v}</div></div>`).join('');
+}
+
+// ── MOBILE DRAWER ──
+let drawerOpen=false;
+function updateMobileDrawer(d,hasData){
+  const pulse=document.getElementById('drawerPulse');
+  const title=document.getElementById('drawerTitle');
+  const sub=document.getElementById('drawerSub');
+  if(hasData){
+    pulse.className='drawer-pulse active';
+    const areas=[d.hasSwag&&'Swag',d.hasRec&&'Recognition',d.hasEvt&&'Events'].filter(Boolean);
+    title.textContent='Blueprint building…';
+    sub.textContent=areas.join(' · ');
+  } else {
+    pulse.className='drawer-pulse idle';
+    title.textContent='Your Blueprint';
+    sub.textContent='Answer questions above to start building';
+  }
+}
+function syncDrawerContent(){
+  // Mirror the right panel content into the drawer
+  const bp=document.getElementById('bpContent');
+  document.getElementById('drawerBody').innerHTML=bp?bp.innerHTML:'';
+}
+function toggleDrawer(){
+  drawerOpen=!drawerOpen;
+  const drawer=document.getElementById('mobileDrawer');
+  drawer.classList.toggle('expanded',drawerOpen);
+  syncDrawerContent();
+}
+
+// ── PRESENT MODE ──
+function openPM(){
+  const d=D(),sols=buildSols(d);
+  const cx=calcComplexity(d);
+  const stats=platformStats(d);
+  const coName=d.co||'your team';
+  document.getElementById('pmCo').textContent=coName;
+  const hasCo=!!d.co;
+  document.getElementById('pmPRow').style.display=hasCo?'flex':'none';
+  if(hasCo){
+    document.getElementById('pmLogo').textContent=d.co[0].toUpperCase();
+    document.getElementById('pmPN').textContent=d.co;
+    document.getElementById('pmPM').textContent=[d.hd,d.co2].filter(Boolean).join(' · ');
+  }
+  let pp='';
+  if(d.hasSwag)pp+=`<div class="pm-pi"><div class="pm-ck s">✓</div><div><strong>Swag & Branded Merchandise</strong><br><span style="color:var(--muted);font-size:14px;">${d.swag.sto||'Current setup'}${d.swag.frust?.length?' · '+arr(d.swag.frust,''):''}</span></div></div>`;
+  if(d.hasRec)pp+=`<div class="pm-pi"><div class="pm-ck r">✓</div><div><strong>Employee Recognition & Culture</strong><br><span style="color:var(--muted);font-size:14px;">${d.rec.meth||'Current approach'}${d.rec.gap?.length?' · '+arr(d.rec.gap,''):''}</span></div></div>`;
+  if(d.hasEvt)pp+=`<div class="pm-pi"><div class="pm-ck e">✓</div><div><strong>Events & Client Gifting</strong><br><span style="color:var(--muted);font-size:14px;">${d.evt.cnt||'Multiple events'}${d.evt.pain?.length?' · '+arr(d.evt.pain,''):''}</span></div></div>`;
+  document.getElementById('pmPains').innerHTML=pp||'<div style="color:var(--muted)">No areas selected.</div>';
+
+  // Complexity
+  setTimeout(()=>{
+    document.getElementById('pmCxNowBar').style.width=cx.score+'%';
+    document.getElementById('pmCxStBar').style.width=cx.stadiumScore+'%';
+  },80);
+  document.getElementById('pmCxPct').textContent=cx.pct+'%';
+  document.getElementById('pmCxNowTag').textContent=cx.nowLbl;
+  document.getElementById('pmCxStTag').textContent=cx.stLbl;
+  document.getElementById('pmCxDrivers').innerHTML=cx.drivers.map(dr=>
+    `<div class="cx2-driver"><div class="cx2-driver-dot"></div>${dr}</div>`).join('');
+
+  // Platform stats
+  document.getElementById('pmImpact').innerHTML=stats.map(m=>`<div class="impact-cell"><div class="impact-num" style="color:var(--green)">${m.num}</div><div class="impact-label">${m.label}</div><div class="impact-source">${m.source}</div></div>`).join('');
+  const tierMap2=[
+    {key:'t0',lbl:nextLabel(0,d.hd),items:sols.filter((_,i)=>i===0)},
+    {key:'t1',lbl:nextLabel(1,d.hd),items:sols.filter((_,i)=>i===1)},
+    {key:'t2',lbl:nextLabel(2,d.hd),items:sols.filter((_,i)=>i>=2)},
+  ].filter(t=>t.items.length);
+  document.getElementById('pmSols').innerHTML=tierMap2.map(t=>`
+    <div class="pm-tier-group">
+      <div class="pm-tier-header"><div class="pm-tier-dot ${t.key}"></div><div class="pm-tier-lbl ${t.key}">${t.lbl}</div></div>
+      <div class="pm-tier-body ${t.key}">${t.items.map(s=>`<div class="pm-sol-item"><div class="pm-sol-name">${s.name}</div><div class="pm-sol-why">${s.why}</div></div>`).join('')}</div>
+    </div>`).join('');
+  document.getElementById('pm').classList.add('on');
+}
+function closePM(){document.getElementById('pm').classList.remove('on');}
+
+// ── PROJECT SPACE ──
+const drMembers=[];
+function openProjectSpace(){
+  const d=D();
+  document.getElementById('drCo').textContent=d.co||'your team';
+  document.getElementById('drSub').textContent=`Based on what you shared about ${d.co ? d.co+"'s " : 'your '}focus on ${[d.hasSwag&&'swag',d.hasRec&&'recognition',d.hasEvt&&'events'].filter(Boolean).join(', ')}, we've set up a shared workspace. A Stadium rep has been notified and will join shortly.`;
+  // Focus chips
+  const chips=[d.hasSwag&&{cls:'s',label:'🗃️ Swag'},d.hasRec&&{cls:'r',label:'🏆 Recognition'},d.hasEvt&&{cls:'e',label:'🎪 Events'}].filter(Boolean);
+  document.getElementById('drFocusChips').innerHTML=chips.map(c=>`<div class="dr-chip ${c.cls}">${c.label}</div>`).join('');
+  // Summary
+  const sumParts=[];
+  if(d.hd)sumParts.push(`${d.hd} employees`);
+  if(d.co2)sumParts.push(d.co2);
+  if(d.wf)sumParts.push(d.wf.split('—')[0].trim());
+  document.getElementById('drSummaryText').textContent=sumParts.join(' · ');
+  document.getElementById('drMain').style.display='block';
+  document.getElementById('drSent').style.display='none';
+  document.getElementById('dealRoom').classList.add('on');
+}
+function addMember(){
+  const input=document.getElementById('drEmailInput');
+  const email=input.value.trim();
+  if(!email||!email.includes('@'))return;
+  if(drMembers.includes(email))return;
+  drMembers.push(email);
+  const initials=email[0].toUpperCase();
+  const el=document.createElement('div');
+  el.className='dr-member';
+  el.innerHTML=`<div class="dr-avatar prospect">${initials}</div><div><div class="dr-member-name">${email}</div><div class="dr-member-role">Invited</div></div>`;
+  document.getElementById('drMembers').appendChild(el);
+  input.value='';
+}
+function submitProjectSpace(){
+  document.getElementById('drMain').style.display='none';
+  document.getElementById('drSent').style.display='block';
+}
+function closeProjectSpace(){document.getElementById('dealRoom').classList.remove('on');}
+
+// ── PDF DOWNLOAD ──
+function downloadPDF(){
+  const d=D(),sols=buildSols(d),cx=calcComplexity(d),stats=platformStats(d);
+  const co=d.co||'Your Team';
+  const areas=[d.hasSwag&&'Swag & Branded Merchandise',d.hasRec&&'Employee Recognition & Culture',d.hasEvt&&'Events & Client Gifting'].filter(Boolean);
+  const tierGroups=[
+    {key:'t0',lbl:'Start here',color:'#2ECC71',items:sols.filter((_,i)=>i===0)},
+    {key:'t1',lbl:"When you're ready",color:'#4D9FFF',items:sols.filter((_,i)=>i===1)},
+    {key:'t2',lbl:'Down the road',color:'#8A8A9A',items:sols.filter((_,i)=>i>=2)},
+  ].filter(t=>t.items.length);
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Engagement Blueprint — ${co}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:system-ui,-apple-system,sans-serif;background:#1E1235;color:rgba(255,255,255,0.93);padding:52px 56px;min-height:100vh;}
+    .logo{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;margin-bottom:44px;color:#fff;}
+    .logo-mark{font-size:22px;}
+    .from{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#FF7A35;margin-bottom:10px;}
+    h1{font-size:36px;font-weight:900;letter-spacing:-1px;line-height:1.15;margin-bottom:6px;}
+    h1 em{font-style:normal;color:#2ECC71;}
+    .meta{font-size:14px;color:rgba(255,255,255,0.55);margin-bottom:44px;}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+    .card{background:#2A1A4A;border:1px solid rgba(255,255,255,0.11);border-radius:13px;padding:24px;}
+    .card-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:16px;}
+    .area-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;font-size:14px;line-height:1.5;}
+    .ck{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#000;flex-shrink:0;margin-top:2px;}
+    .ck.s{background:#FF7A35;}.ck.r{background:#2ECC71;}.ck.e{background:#4D9FFF;}
+    .cx-headline{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;}
+    .cx-pct{font-size:30px;font-weight:900;color:#2ECC71;letter-spacing:-.8px;}
+    .cx-sublbl{font-size:12px;color:rgba(255,255,255,0.7);font-weight:600;}
+    .cx-bar-row{display:flex;align-items:center;gap:9px;margin-bottom:7px;}
+    .cx-bar-lbl{font-size:11px;font-weight:700;width:54px;flex-shrink:0;}
+    .cx-bar-lbl.now{color:#FF4D6A;}.cx-bar-lbl.st{color:#2ECC71;}
+    .cx-bar-track{flex:1;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;}
+    .cx-bar-fill{height:100%;border-radius:3px;}
+    .cx-bar-fill.now{background:#FF4D6A;}.cx-bar-fill.st{background:#2ECC71;}
+    .cx-tag{font-size:10px;font-weight:700;width:48px;flex-shrink:0;}
+    .cx-drivers{border-top:1px solid rgba(255,255,255,0.09);padding-top:12px;margin-top:12px;}
+    .cx-drivers-lbl{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px;}
+    .cx-driver{display:flex;gap:7px;font-size:11px;color:rgba(255,255,255,0.55);margin-bottom:5px;line-height:1.4;}
+    .cx-driver-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.4);flex-shrink:0;margin-top:5px;}
+    .sol-card{background:#2A1A4A;border:1px solid rgba(255,255,255,0.11);border-radius:13px;padding:24px;margin-bottom:20px;}
+    .tier{margin-bottom:16px;}
+    .tier-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+    .tier-dot{width:8px;height:8px;border-radius:50%;}
+    .tier-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;}
+    .tier-body{border-radius:9px;overflow:hidden;}
+    .sol-item{padding:12px 14px;margin-bottom:1px;}
+    .sol-item.t0{background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.25);}
+    .sol-item.t1{background:rgba(77,159,255,0.08);border:1px solid rgba(77,159,255,0.18);}
+    .sol-item.t2{background:rgba(138,138,154,0.08);border:1px solid rgba(138,138,154,0.15);}
+    .sol-name{font-size:14px;font-weight:700;margin-bottom:4px;}
+    .sol-why{font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5;}
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+    .stat{background:#2A1A4A;border:1px solid rgba(255,255,255,0.11);border-radius:9px;padding:14px;}
+    .stat-num{font-size:20px;font-weight:800;color:#2ECC71;letter-spacing:-.5px;}
+    .stat-lbl{font-size:11px;color:rgba(255,255,255,0.55);margin-top:4px;line-height:1.4;}
+    .stat-src{font-size:9px;color:rgba(255,255,255,0.2);margin-top:3px;}
+    .footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.09);padding-top:20px;margin-top:8px;font-size:12px;color:rgba(255,255,255,0.35);}
+    .footer-logo{font-size:15px;font-weight:900;color:#fff;letter-spacing:-.3px;}
+  </style></head><body>
+  <div class="logo"><span class="logo-mark">✳️</span> Stadium</div>
+  <div class="from">Your Engagement Blueprint</div>
+  <h1>Built for <em>${co}</em></h1>
+  <div class="meta">${[d.hd,d.co2,d.wf?d.wf.split('—')[0].trim():''].filter(Boolean).join(' · ')}</div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-lbl">Areas you selected</div>
+      ${[
+        d.hasSwag && {
+          cls:'s', label:'Swag & Branded Merchandise',
+          detail:[d.swag.sto, arr(d.swag.frust,'')].filter(Boolean).join(' · ')
+        },
+        d.hasRec && {
+          cls:'r', label:'Employee Recognition & Culture',
+          detail:[d.rec.meth, arr(d.rec.gap,'')].filter(Boolean).join(' · ')
+        },
+        d.hasEvt && {
+          cls:'e', label:'Events & Client Gifting',
+          detail:[d.evt.cnt, arr(d.evt.pain,'')].filter(Boolean).join(' · ')
+        }
+      ].filter(Boolean).map(a=>`
+        <div class="area-row">
+          <div class="ck ${a.cls}">✓</div>
+          <div>
+            <strong>${a.label}</strong>
+            ${a.detail ? `<div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:3px;line-height:1.5;">${a.detail}</div>` : ''}
+          </div>
+        </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="card-lbl">Complexity reduction</div>
+      <div class="cx-headline"><div class="cx-pct">${cx.pct}%</div><div class="cx-sublbl">estimated reduction with Stadium</div></div>
+      <div class="cx-bar-row"><div class="cx-bar-lbl now">Now</div><div class="cx-bar-track"><div class="cx-bar-fill now" style="width:${cx.score}%"></div></div><div class="cx-tag" style="color:#FF4D6A;font-weight:700;font-size:10px;">${cx.nowLbl}</div></div>
+      <div class="cx-bar-row"><div class="cx-bar-lbl st">Stadium</div><div class="cx-bar-track"><div class="cx-bar-fill st" style="width:${cx.stadiumScore}%"></div></div><div class="cx-tag" style="color:#2ECC71;font-weight:700;font-size:10px;">${cx.stLbl}</div></div>
+      <div class="cx-drivers"><div class="cx-drivers-lbl">Based on</div>${cx.drivers.map(dr=>`<div class="cx-driver"><div class="cx-driver-dot"></div>${dr}</div>`).join('')}</div>
+    </div>
+  </div>
+
+  <div class="sol-card">
+    <div class="card-lbl">Your Stadium solution — sequenced</div>
+    ${tierGroups.map(t=>`
+      <div class="tier">
+        <div class="tier-header"><div class="tier-dot" style="background:${t.color}"></div><div class="tier-lbl" style="color:${t.color}">${t.lbl}</div></div>
+        ${t.items.map(s=>`<div class="sol-item ${t.key}"><div class="sol-name">${s.name}</div><div class="sol-why">${s.why}</div></div>`).join('')}
+      </div>`).join('')}
+  </div>
+
+  <div class="stats-grid">${stats.map(m=>`<div class="stat"><div class="stat-num">${m.num}</div><div class="stat-lbl">${m.label}</div><div class="stat-src">${m.source}</div></div>`).join('')}</div>
+
+  <div class="footer"><div>Powered by Stadium · bystadium.com · 10,000+ companies · G2 rated 4.8★</div><div class="footer-logo">✳️ Stadium</div></div>
+  </body></html>`;
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`Stadium-Blueprint-${co.replace(/\s+/g,'-')}.html`;
+  a.click();URL.revokeObjectURL(url);
+}
+
+// ── EMAIL ──
+function emailBlueprint(){
+  const d=D(),sols=buildSols(d);
+  const co=d.co||'Your Team';
+  const areas=[d.hasSwag&&'Swag',d.hasRec&&'Recognition',d.hasEvt&&'Events'].filter(Boolean).join(', ');
+  const solLines=sols.map((s,i)=>`${i===0?'→ Start here':i===1?'→ Next':'→ Down the road'}: ${s.name}`).join('%0A');
+  const body=`Your Stadium Engagement Blueprint%0A%0ABuilt for: ${co}%0AFocus areas: ${areas}%0A%0ASolution:%0A${solLines}%0A%0ALearn more: bystadium.com`;
+  window.location.href=`mailto:?subject=Your Stadium Engagement Blueprint — ${co}&body=${body}`;
+}
+
+upd();
+</script>
+</body>
+</html>
